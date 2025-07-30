@@ -1,0 +1,20 @@
+# ----- training hyper-parameters -----
+seed:        3407
+device:      cuda          # "cuda" | "cpu"
+epochs:      100
+batch_size:  128
+lr:          1.0e-3
+weight_decay: 1.0e-2
+ema_decay:   0.995
+scheduler:
+  min_lr:    1.0e-5        # CosineAnnealingLR eta_min
+  T_max:     null          # will be filled automatically
+
+# ----- diffusion process -----
+T:           1000          # total timesteps
+time_dim:    128
+beta_schedule: cosine
+
+# ----- paths -----
+data_root:   "./data/mnist"
+output_root: "./outputs"
