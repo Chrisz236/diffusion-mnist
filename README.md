@@ -106,6 +106,7 @@ yourname_submission.zip
 │   └── *.py                 # Any extra files (e.g. transformer.py)
 ├── ckpt_final.pt            # Final checkpoint
 ├── final_grid.png           # 8x8 sampled image grid from final model
+├── <config_file>.yml        # Yaml file that you used to tune hyperparameter
 └── results.txt              # One line: FID = <value>
 ```
 
