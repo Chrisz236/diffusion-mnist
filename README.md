@@ -1,138 +1,121 @@
-# Diffusion Model Assignment – MNIST Generation
+# Diffusion-MNIST Assignment
 
-## Overview
-In this assignment, you will **implement, train, and tune a diffusion model** to generate realistic MNIST digits.  
-You will start from a **baseline UNet-based DDPM** we provide and can:
-- **Tune hyperparameters** (learning rate, EMA decay, beta schedule, etc.).
-- **Modify the model architecture** (swap UNet for Transformer, add residual blocks, change channels, etc.).
-
-## What You Need to Do
-1. **Train your diffusion model** using `train.py`.
-2. **Optionally modify the model** in `models/model.py` (or create your own).
-3. **Tune hyperparameters** by editing your config file (`configs/my_config.yaml`).
-4. **Generate samples** using `sample.py`.
-5. **Submit your results** (your checkpoint, config, and samples) so we can evaluate FID.
+Train and tune a **diffusion model** on the MNIST dataset using a UNet backbone.  
+This repo provides a modular baseline implementation. Your task is to explore architecture or training improvements to generate better samples, and compete for the **lowest FID**!
 
 ---
 
 ## Repository Structure
+
 ```
 
 diffusion-mnist/
-├── configs/                 # Config files for training
-│   └── default.yaml         # Baseline config
-├── data/                    
-│   └── mnist/               # MNIST dataset will download here
-├── models/                  # Model architectures
-│   ├── model.py             # Main entry point (you can edit this)
-│   └── unet.py              # Provided UNet baseline
-├── outputs/                 # Checkpoints will be saved here 
-├── train.py                 # Script to train a model
-├── sample.py                # Script to generate samples from a trained model
-├── evaluate.py              # Computes FID vs. MNIST test set
-├── environment.yml          # Conda env yaml
-└── README.md
+├── configs/           # Config files for training
+│   └── default.yaml   # Baseline config
+├── data/              # MNIST auto-downloads here
+├── models/            # Model architecture
+│   ├── model.py       # Unified interface (you can modify this)
+│   └── unet.py        # Provided UNet baseline
+├── outputs/           # Checkpoints and sample images
+├── train.py           # Train a model
+├── sample.py          # Generate image grid from a checkpoint
+├── evaluate.py        # Compute FID vs. MNIST test set
+├── submit.py          # Package submission (optional helper)
+├── environment.yml    # Conda environment spec
+└── README.md          # You are here
 
 ````
 
 ---
 
-## How to Use
+## Quick Start
 
-### 1. Install Conda Envionment and Dependencies
-We use Python 3.11 and PyTorch with CUDA 11.8.
+### 1. Setup Conda environment
 
 ```bash
-pip install torch torchvision tqdm numpy scipy pyyaml
+conda env create -f environment.yml
+conda activate diffusion-mnist
 ````
 
-### 2. Train a Model
-
-Use your own config file or the default one:
+### 2. Train the baseline model
 
 ```bash
-python train.py --config configs/default.yaml --student_name alice
+python train.py --config configs/default.yaml
 ```
 
-This will:
+By default, checkpoints and sample images are saved under `outputs/`.
 
-* Train your model for the specified number of epochs.
-* Save checkpoints in `checkpoints/alice/`.
-
-You can edit:
-
-* **Learning rate, EMA decay, epochs, and model width/depth** in your config file.
-* Or **modify `models/model.py`** to build a new architecture (UNet, Transformer, etc.).
-
-### 3. Generate Samples
-
-After training, generate 5,000 samples for FID evaluation:
+### 3. Sample from a trained model
 
 ```bash
-python sample.py --checkpoint checkpoints/alice/final.pt --student_name alice
+python sample.py --ckpt outputs/ckpt_100.pt
 ```
 
-Samples will be stored in:
+This will generate an `8x8` grid of samples as a `.png` file.
 
-```
-outputs/alice/samples/
-```
-
-### 4. Evaluate Your Model
-
-Run FID evaluation:
+### 4. Evaluate FID
 
 ```bash
-python evaluate.py --student_name alice
+python evaluate.py --ckpt outputs/ckpt_100.pt
 ```
 
-Results (FID score) will be saved in:
-
-```
-results/alice.json
-```
-
-### 5. Leaderboard
-
-The instructor will run:
-
-```bash
-python leaderboard.py
-```
-
-This aggregates all results in `results/` and ranks students by FID.
+This computes the FID between 10,000 generated samples and the MNIST test set.
 
 ---
 
-## Rules
+## Configuration
 
-1. You **must** generate exactly **5,000 samples** for evaluation.
-2. Use the **provided MNIST test set** for FID comparison.
-3. Do not modify the evaluation scripts (only `model.py` and `configs` are allowed).
-4. Submit:
+All hyperparameters are set in `configs/default.yaml`, including:
 
-   * Your `configs/my_config.yaml`
-   * Your modified `models/model.py`
-   * Your final checkpoint (`checkpoints/student_name/final.pt`)
-   * (Optional) Your generated samples (`outputs/student_name/samples/`)
+* Training: `epochs`, `batch_size`, `lr`, `ema_decay`
+* Diffusion: `T` (total time steps), `beta_schedule`
+* Paths: `data_root`, `output_root`
 
----
+You can modify this file or pass in a different config using:
 
-## Grading
-
-* **Leaderboard FID score (60%)**: Lower is better.
-* **Code quality & reproducibility (20%)**.
-* **Report (20%)**: Short writeup (1 page) describing what you tried (hyperparameters, architecture changes, tricks).
-
-Bonus points for:
-
-* Novel architectures (e.g., Transformer backbone).
-* Additional metrics (e.g., Precision/Recall).
+```bash
+python train.py --config configs/my_config.yaml
+```
 
 ---
 
-## Tips
+## Assignment Rules
 
-* Start simple: tune **learning rate, EMA decay, and UNet width** before modifying architecture.
-* Use `configs/sample_transformer.yaml` if you want to try a Transformer backbone.
-* For fast experiments, reduce epochs or use fewer samples during development (but final submission must use 5,000 samples).
+You're expected to **modify `models/model.py`** as your main interface to define the model architecture and noise schedule. You may:
+
+✅ Use new architectures (e.g., Transformer)
+✅ Change how time embeddings are used
+✅ Tweak the noise schedule or loss function
+✅ Add new files under `models/`
+
+But do **not** change:
+
+* CLI and config interfaces of `train.py`, `sample.py`, or `evaluate.py`
+* Output paths or file naming convention
+
+---
+
+## Submission Format
+
+Your final submission should include:
+
+```
+yourname_submission.zip
+├── models/
+│   ├── model.py             # Your modified model interface
+│   └── *.py                 # Any extra files (e.g. transformer.py)
+├── ckpt_final.pt            # Final checkpoint
+├── final_grid.png           # 8x8 sampled image grid from final model
+└── results.txt              # One line: FID = <value>
+```
+
+We will unzip and run:
+
+```bash
+python sample.py   --ckpt ckpt_final.pt
+python evaluate.py --ckpt ckpt_final.pt
+```
+
+To verify your claimed results.
+
+Happy diffusing!
