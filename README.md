@@ -83,10 +83,10 @@ python train.py --config configs/my_config.yaml
 
 You're expected to **modify `models/model.py`** as your main interface to define the model architecture and noise schedule. You may:
 
-✅ Use new architectures (e.g., Transformer)
-✅ Change how time embeddings are used
-✅ Tweak the noise schedule or loss function
-✅ Add new files under `models/`
+- ✅ Use new architectures (e.g., Transformer)
+- ✅ Change how time embeddings are used
+- ✅ Tweak the noise schedule or loss function
+- ✅ Add new files under `models/`
 
 But do **not** change:
 
