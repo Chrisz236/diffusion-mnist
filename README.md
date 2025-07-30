@@ -53,13 +53,13 @@ python sample.py --ckpt outputs/ckpt_100.pt
 
 This will generate an `8x8` grid of samples as a `.png` file.
 
-### 4. Evaluate FID
+### 4. Evaluate FID (Note: This evaluate process may take a while!)
 
 ```bash
 python evaluate.py --ckpt outputs/ckpt_100.pt
 ```
 
-This computes the FID between 10,000 generated samples and the MNIST test set.
+This computes the FID between 5,000 generated samples and the MNIST test set.
 
 ---
 
