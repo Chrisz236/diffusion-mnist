@@ -7,8 +7,8 @@ lr:          1.0e-3
 weight_decay: 1.0e-2
 ema_decay:   0.995
 scheduler:
-  min_lr:    1.0e-5        # CosineAnnealingLR eta_min
-  T_max:     null          # will be filled automatically
+  T_max: 10000
+  eta_min: 1e-5
 
 # ----- diffusion process -----
 T:           1000          # total timesteps
