@@ -14,6 +14,7 @@ parser.add_argument("--config", default="configs/default.yaml")
 parser.add_argument("--output", default=None)          # optional override
 args = parser.parse_args()
 cfg  = yaml.safe_load(open(args.config))
+cfg["scheduler"]["eta_min"] = float(cfg["scheduler"]["eta_min"])
 if args.output: cfg["output_root"] = args.output
 
 os.makedirs(cfg["output_root"], exist_ok=True)
